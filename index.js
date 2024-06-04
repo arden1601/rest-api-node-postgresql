@@ -22,22 +22,21 @@ app.get('/api/get/:column', async (req, res) => {
     res.json(rows);
 });
 
-app.post('/api/add-review', async (req, res) => {
-    const {customer_id, book_id, review_text, rating} = req.body;
-    if (!customer_id || !book_id || !review_text || !rating) {
-        return res.status(400).json({ error: 'Missing required fields' });
-    }
+app.post('/api/post/:table', async (req, res) => {
+    const { table } = req.params;
+    const { column, values } = req.body;
+    const arr_values = Object.values(values);
+    console.log(arr_values);
     try{
-        const query = `
-            INSERT INTO reviews(customer_id, book_id, review_text, rating)
-            VALUES($1, $2, $3, $4)
-            RETURNING id;`;
-        const value = [customer_id, book_id, review_text, rating];
-        const result = await pool.query(query, value);
-        res.status(201).send(`Review added successfully! review_id: ${result.rows[0].id}`);
+        const result = await pool.query(qbuild.InsertData(table, column, arr_values), arr_values);
+        res.status(201).send(`Data added successfully!`);
     }catch (error){
         return res.status(400).json({ error: error.message });
     }
+});
+
+app.put('/api/put/:table', async (req, res) => {
+    
 });
 
 app.listen(PORT, () => {

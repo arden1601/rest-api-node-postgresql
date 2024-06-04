@@ -6,9 +6,13 @@ exports.GetData = function(column, table) {
 }
 
 exports.InsertData = function(table, column, values) {
+    let num = []
+    for (let i = 0; i < values.length; i++) {
+        num.push(`$${i + 1}`)
+    }
     const query = `
         INSERT INTO ${table}(${column.map(v => v)})
-        VALUES(${values.map(v => v)})
+        VALUES(${num.map(n => n)})
         RETURNING id;`
     console.log(query);
     return query;
