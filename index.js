@@ -16,13 +16,9 @@ const pool = new Pool({
     port: 5432,
 });
 
-app.get('/api/customer-reviews', async (req, res) => {
-    const { rows } = await pool.query('SELECT * FROM customer_reviews');
-    res.json(rows);
-});
-
-app.get('/api/customers', async (req, res) => {
-    const { rows } = await pool.query(query);
+app.get('/api/get/:column', async (req, res) => {
+    const { column } = req.params;
+    const { rows } = await pool.query(qbuild.GetData(['*'], column));
     res.json(rows);
 });
 
