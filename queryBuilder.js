@@ -22,3 +22,11 @@ exports.UpdateData = function(table, column, values, condition) {
     console.log(query);
     return query;
 }
+
+exports.DeleteData = function(table, condition) {
+    const query = `
+        DELETE FROM ${table}
+        WHERE ${condition};`
+    console.log(query);
+    return query;
+}
