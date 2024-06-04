@@ -36,7 +36,17 @@ app.post('/api/post/:table', async (req, res) => {
 });
 
 app.put('/api/put/:table', async (req, res) => {
-    
+    const { table } = req.params;
+    const { column, values, condition } = req.body;
+    const arr_values = Object.values(values);
+    console.log(column);
+    console.log(arr_values);
+    try{
+        const result = await pool.query(qbuild.UpdateData(table, column, arr_values, condition), arr_values);
+        res.status(201).send(`Data updated successfully!`);
+    }catch (error){
+        return res.status(400).json({ error: error.message });
+    }
 });
 
 app.listen(PORT, () => {

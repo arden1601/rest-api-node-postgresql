@@ -21,7 +21,7 @@ exports.InsertData = function(table, column, values) {
 exports.UpdateData = function(table, column, values, condition) {
     const query = `
         UPDATE ${table}
-        SET ${column.map((c, i) => `${c} = ${values[i]}`)}
+        SET ${column.map((c, i) => `${c} = $${i+1}`)}
         WHERE ${condition};`
     console.log(query);
     return query;
