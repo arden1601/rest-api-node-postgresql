@@ -4,6 +4,12 @@ exports.GetData = function(column, table) {
     console.log(query);
     return query;
 }
+exports.GetDatabyId = function(column, table) {
+    const query = `
+        SELECT ${column.map(p => p)} FROM ${table} WHERE id=$1;`
+    console.log(query);
+    return query;
+}
 
 exports.InsertData = function(table, column) {
     const query = `

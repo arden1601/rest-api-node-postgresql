@@ -16,9 +16,16 @@ const getDataTable = (req, res) => {
         res.status(200).json(results.rows);
     });
 }; 
-
-
+const getDataTablebyID = (req, res) => {
+    const  param  = Object.values(req.params);
+    console.log(param); 
+    pool.query(qbuild.GetDatabyId(['*'], param[0]),[param[1]] ,(error, results) => {
+        if (error) throw error;
+        res.status(200).json(results.rows);
+    });
+}; 
 
 module.exports = {
-    getDataTable, 
+    getDataTable,
+    getDataTablebyID
 }

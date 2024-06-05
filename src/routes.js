@@ -8,5 +8,6 @@ router.get('/', (req, res) => {
 });
 
 router.get('/get/:table', controller.getDataTable);
+router.get('/getbyid/:table/:id', controller.getDataTablebyID);
 
 module.exports = router;
