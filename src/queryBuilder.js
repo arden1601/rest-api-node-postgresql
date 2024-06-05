@@ -5,20 +5,16 @@ exports.GetData = function(column, table) {
     return query;
 }
 
-exports.InsertData = function(table, column, values) {
-    let num = []
-    for (let i = 0; i < values.length; i++) {
-        num.push(`$${i + 1}`)
-    }
+exports.InsertData = function(table, column) {
     const query = `
         INSERT INTO ${table}(${column.map(v => v)})
-        VALUES(${num.map(n => n)})
+        VALUES(${column.map((c, i) => `$${i+1}`)})
         RETURNING id;`
     console.log(query);
     return query;
 }
 
-exports.UpdateData = function(table, column, values, condition) {
+exports.UpdateData = function(table, column, condition) {
     const query = `
         UPDATE ${table}
         SET ${column.map((c, i) => `${c} = $${i+1}`)}
@@ -34,3 +30,4 @@ exports.DeleteData = function(table, condition) {
     console.log(query);
     return query;
 }
+

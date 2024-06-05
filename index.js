@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const { Pool } = require('pg'); 
 
-const qbuild = require('./queryBuilder.js');
+const qbuild = require('./src/queryBuilder.js');
 
 const PORT = 3000;
 
@@ -28,7 +28,7 @@ app.post('/api/post/:table', async (req, res) => {
     const arr_values = Object.values(values);
     console.log(arr_values);
     try{
-        const result = await pool.query(qbuild.InsertData(table, column, arr_values), arr_values);
+        const result = await pool.query(qbuild.InsertData(table, column), arr_values);
         res.status(201).send(`Data added successfully!`);
     }catch (error){
         return res.status(400).json({ error: error.message });
