@@ -38,4 +38,11 @@ exports.DeleteData = function(table, condition) {
 }
 
 exports.CheckCustomerExist = "SELECT * FROM customer WHERE customer_name=$1;"
+exports.CheckAuthorExist = "SELECT * FROM author WHERE author_name=$1;"
+exports.CheckAuthorIdExist = "SELECT * FROM author WHERE id=$1;"
+exports.CheckCategoryExist = "SELECT * FROM book_category WHERE category_name=$1;"
+exports.CheckCategoryIdExist = "SELECT * FROM book_category WHERE id=$1;"
+exports.CheckPublisherIdExist = "SELECT * FROM publisher WHERE id=$1;"
+exports.CheckPublisherExist = "SELECT * FROM publisher WHERE publisher_name=$1;"
+exports.CheckBookExist = "SELECT * FROM book WHERE book_name=$1;"
 

@@ -10,5 +10,8 @@ router.get('/', (req, res) => {
 router.get('/get/:table', controller.getDataTable);
 router.get('/getbyid/:table/:id', controller.getDataTablebyID);
 router.post('/addCustomer', controller.addCustomer);
+router.post('/addAuthor', controller.addAuthor);
+router.post('/addPublisher', controller.addPublisher);
+router.post('/addCategory', controller.addCategory);
 
 module.exports = router;
