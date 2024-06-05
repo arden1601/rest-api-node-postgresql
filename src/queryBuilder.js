@@ -37,3 +37,5 @@ exports.DeleteData = function(table, condition) {
     return query;
 }
 
+exports.CheckCustomerExist = "SELECT * FROM customer WHERE customer_name=$1;"
+

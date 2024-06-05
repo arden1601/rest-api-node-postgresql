@@ -25,7 +25,25 @@ const getDataTablebyID = (req, res) => {
     });
 }; 
 
+const addCustomer = (req, res) => {
+    const {customer_name, street, city, customer_state, country, telephone} = req.body;
+    pool.query(qbuild.CheckCustomerExist, [customer_name], (error, results) => {
+        if (results.rows.length)
+            res.send(`Customer is already Exist!`);
+        else {
+            pool.query(qbuild.InsertData('customer', ['customer_name', 'street', 'city', 'customer_state', 'country', 'telephone']), [customer_name, street, city, customer_state, country, telephone], (error, results) => {
+                if (error) throw error;
+                res.status(201).send(`Customer added with ID: ${results.rows[0].id}`);
+            });
+        }
+    });
+};
+
+
+
+
 module.exports = {
     getDataTable,
-    getDataTablebyID
+    getDataTablebyID,
+    addCustomer
 }

@@ -9,5 +9,6 @@ router.get('/', (req, res) => {
 
 router.get('/get/:table', controller.getDataTable);
 router.get('/getbyid/:table/:id', controller.getDataTablebyID);
+router.post('/addCustomer', controller.addCustomer);
 
 module.exports = router;
