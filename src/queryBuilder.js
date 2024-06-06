@@ -38,6 +38,14 @@ exports.DeleteData = function(table, condition) {
     return query;
 }
 
+exports.CheckIfExist = function(table, column){
+    const query = `
+        SELECT * FROM ${table}
+        WHERE ${column}=$1;`
+    console.log(query);
+    return query;
+}
+
 exports.CheckCustomerExist = "SELECT * FROM customer WHERE customer_name=$1;"
 exports.CheckAuthorExist = "SELECT * FROM author WHERE author_name=$1;"
 exports.CheckAuthorIdExist = "SELECT * FROM author WHERE id=$1;"

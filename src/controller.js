@@ -77,7 +77,7 @@ const addCategory = (req, res) => {
         if (results.rows.length)
             res.send(`Category is already Exist!`);
         else {
-            pool.query(qbuild.InsertData('category', ['category_name']), [category_name], (error, results) => {
+            pool.query(qbuild.InsertData('book_category', ['category_name']), [category_name], (error, results) => {
                 if (error) throw error;
                 res.status(201).send(`Category added with ID: ${results.rows[0].id}`);
             });
@@ -87,12 +87,12 @@ const addCategory = (req, res) => {
 };
 
 const handleError = (err) => {
-    client.query("ROLLBACK", (rollbackErr) => {
+    pool.query("ROLLBACK", (rollbackErr) => {
       done();
       if (rollbackErr) {
         console.error("Rollback error:", rollbackErr);
       }
-      console.error("Error in transaction:", err);
+      pool.error("Error in transaction:", err);
       res.status(500).send("An error occurred.");
     });
   };
@@ -150,10 +150,9 @@ const deleteCustomer = (req, res) => {
     pool.query('BEGIN', (error) => {
         if (error) handleError(error);
         pool.query(qbuild.DeleteData('reviews', 'customer_id=$1'), [id], (error) => {
-            if (error) handleError(error);
             pool.query(qbuild.DeleteData('bought', 'customer_id=$1'), [id], (error) => {
                 if (error) handleError(error);
-                pool.query(qbuild.DeleteData('wishlist', 'id=$1'), [id], (error) => {
+                pool.query(qbuild.DeleteData('wishlist', 'customer_id=$1'), [id], (error) => {
                     if (error) handleError(error);
                     pool.query(qbuild.DeleteData('customer', 'id=$1'), [id], (error) => {
                         if (error) handleError(error);
@@ -168,6 +167,8 @@ const deleteCustomer = (req, res) => {
         
     });
 }
+
+
 
 const updateById = (req, res) => {
     const { table } = req.params;
