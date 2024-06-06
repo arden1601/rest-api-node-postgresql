@@ -20,11 +20,12 @@ exports.InsertData = function(table, column) {
     return query;
 }
 
-exports.UpdateData = function(table, column, condition) {
+exports.UpdateData = function(table, column) {
+    const num = column.length+1;
     const query = `
         UPDATE ${table}
         SET ${column.map((c, i) => `${c} = $${i+1}`)}
-        WHERE ${condition};`
+        WHERE id=$${num};`
     console.log(query);
     return query;
 }
@@ -45,4 +46,5 @@ exports.CheckCategoryIdExist = "SELECT * FROM book_category WHERE id=$1;"
 exports.CheckPublisherIdExist = "SELECT * FROM publisher WHERE id=$1;"
 exports.CheckPublisherExist = "SELECT * FROM publisher WHERE publisher_name=$1;"
 exports.CheckBookExist = "SELECT * FROM book WHERE book_name=$1;"
+exports.CheckStoreIdExist = "SELECT * FROM store WHERE id=$1;"
 

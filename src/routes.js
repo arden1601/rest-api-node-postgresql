@@ -13,5 +13,7 @@ router.post('/addCustomer', controller.addCustomer);
 router.post('/addAuthor', controller.addAuthor);
 router.post('/addPublisher', controller.addPublisher);
 router.post('/addCategory', controller.addCategory);
+router.post('/addBooknStock', controller.addBooknStock);
+router.put('/updatebyid/:table', controller.updateById);
 
 module.exports = router;

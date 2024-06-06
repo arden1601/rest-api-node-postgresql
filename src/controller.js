@@ -86,33 +86,56 @@ const addCategory = (req, res) => {
 
 };
 
-const addBook = (req, res) => {
-    const { book_name, publish_year, pages, author_id, publisher_id, category_id, store_id } = req.body;
+const handleError = (err) => {
+    client.query("ROLLBACK", (rollbackErr) => {
+      done();
+      if (rollbackErr) {
+        console.error("Rollback error:", rollbackErr);
+      }
+      console.error("Error in transaction:", err);
+      res.status(500).send("An error occurred.");
+    });
+  };
+const addBooknStock = (req, res) => {
+    const { book_name, publish_year, pages, author_id, publisher_id, category_id, store_id, quantity } = req.body;
+    const conv_year = new Date(publish_year);
+    console.log(conv_year);
+    console.log(req.body);
     if (!book_name || !publish_year || !pages || !author_id || !publisher_id || !category_id) return res.status(400).send('Please fill all fields!');
     pool.query(qbuild.CheckBookExist, [book_name], (error, results) => {
         if (results.rows.length)
             res.send(`Book is already Exist!`);
         else {
             pool.query(qbuild.CheckCategoryIdExist, [category_id], (error, results) => {
-                if (!results.rows.length)
+                if (results.rows.length === 0)
                     res.send(`Category is not Exist!`);
                 else {
                     pool.query(qbuild.CheckAuthorIdExist, [author_id], (error, results) => {
-                        if (!results.rows.length)
+                        if (results.rows.length === 0)
                             res.send(`Author is not Exist!`);
                         else {
                             pool.query(qbuild.CheckPublisherIdExist, [publisher_id], (error, results) => {
-                                if (!results.rows.length)
+                                if (results.rows.length === 0)
                                     res.send(`Publisher is not Exist!`);
                                 else {
                                     pool.query(qbuild.CheckStoreIdExist, [store_id], (error, results) => {
-                                        if (!results.rows.length)
+                                        if (results.rows.length === 0)
                                             res.send(`Store is not Exist!`);
                                         else{
-                                            pool.query(qbuild.InsertData('book', ['book_name', 'publish_year', 'pages', 'author_id', 'publisher_id', 'category_id', 'store_id']), [book_name, publish_year, pages, author_id, publisher_id, category_id, store_id], (error, results) => {
-                                                if (error) throw error;
-                                                res.status(201).send(`Book added with ID: ${results.rows[0].id}`);
-                                            });
+                                            pool.query('BEGIN', (error) => {
+                                                if (error) handleError(error);
+                                                pool.query(qbuild.InsertData('book', ['book_name', 'publish_year', 'pages', 'author_id', 'publisher_id', 'category_id', ]), [book_name, conv_year, pages, author_id, publisher_id, category_id], (error, results) => {
+                                                    if (error) throw error;
+                                                    const book_id = results.rows[0].id;
+                                                    pool.query(qbuild.InsertData('stock', ['book_id', 'store_id', 'quantity']), [book_id, store_id, quantity], (error, result) => {
+                                                        const stock_id = result.rows[0].id;
+                                                        if (error) throw error;
+                                                        pool.query('COMMIT', (error) => {
+                                                            if (error) handleError(error);
+                                                            res.status(201).send(`Book added with ID: ${book_id} || Stock added with ID: ${stock_id}`);
+                                                        });
+                                                });});
+                                            })
                                         }
                                     });
                                 }
@@ -124,6 +147,18 @@ const addBook = (req, res) => {
     }});
 }
 
+const updateById = (req, res) => {
+    const { table } = req.params;
+    const column = req.body.column;
+    const values = Object.values(req.body.values);
+    values.push(req.body.id);
+    console.log(values);
+    pool.query(qbuild.UpdateData(table, column), values, (error, results) => {
+        if (error) throw error;
+        res.status(200).send(`Updated ${table} with ID: ${values[values.length - 1]}`);
+    });
+}
+
 module.exports = {
     getDataTable,
     getDataTablebyID,
@@ -131,5 +166,6 @@ module.exports = {
     addAuthor,
     addPublisher,
     addCategory,
-    addBook
+    addBooknStock,
+    updateById
 }
