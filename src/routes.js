@@ -15,5 +15,6 @@ router.post('/addPublisher', controller.addPublisher);
 router.post('/addCategory', controller.addCategory);
 router.post('/addBooknStock', controller.addBooknStock);
 router.put('/updatebyid/:table', controller.updateById);
+router.delete('/deleteCustomer/:id', controller.deleteCustomer);
 
 module.exports = router;

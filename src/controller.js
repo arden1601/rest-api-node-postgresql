@@ -99,8 +99,6 @@ const handleError = (err) => {
 const addBooknStock = (req, res) => {
     const { book_name, publish_year, pages, author_id, publisher_id, category_id, store_id, quantity } = req.body;
     const conv_year = new Date(publish_year);
-    console.log(conv_year);
-    console.log(req.body);
     if (!book_name || !publish_year || !pages || !author_id || !publisher_id || !category_id) return res.status(400).send('Please fill all fields!');
     pool.query(qbuild.CheckBookExist, [book_name], (error, results) => {
         if (results.rows.length)
@@ -147,12 +145,35 @@ const addBooknStock = (req, res) => {
     }});
 }
 
+const deleteCustomer = (req, res) => {
+    const { id } = req.params;
+    pool.query('BEGIN', (error) => {
+        if (error) handleError(error);
+        pool.query(qbuild.DeleteData('reviews', 'customer_id=$1'), [id], (error) => {
+            if (error) handleError(error);
+            pool.query(qbuild.DeleteData('bought', 'customer_id=$1'), [id], (error) => {
+                if (error) handleError(error);
+                pool.query(qbuild.DeleteData('wishlist', 'id=$1'), [id], (error) => {
+                    if (error) handleError(error);
+                    pool.query(qbuild.DeleteData('customer', 'id=$1'), [id], (error) => {
+                        if (error) handleError(error);
+                        pool.query('COMMIT', (error) => {
+                            if (error) handleError(error);
+                            res.status(200).send(`Deleted Customer with ID: ${id}`);
+                        });
+                    });
+                });
+            });
+        });
+        
+    });
+}
+
 const updateById = (req, res) => {
     const { table } = req.params;
     const column = req.body.column;
     const values = Object.values(req.body.values);
     values.push(req.body.id);
-    console.log(values);
     pool.query(qbuild.UpdateData(table, column), values, (error, results) => {
         if (error) throw error;
         res.status(200).send(`Updated ${table} with ID: ${values[values.length - 1]}`);
@@ -167,5 +188,6 @@ module.exports = {
     addPublisher,
     addCategory,
     addBooknStock,
-    updateById
+    updateById,
+    deleteCustomer
 }

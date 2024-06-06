@@ -16,9 +16,9 @@ const pool = new Pool({
     port: 5432,
 });
 
-app.get('/api/get/:column', async (req, res) => {
+app.get('/api/get/:column', (req, res) => {
     const { column } = req.params;
-    const { rows } = await pool.query(qbuild.GetData(['*'], column));
+    const { rows } = pool.query(qbuild.GetData(['*'], column));
     res.json(rows);
 });
 
